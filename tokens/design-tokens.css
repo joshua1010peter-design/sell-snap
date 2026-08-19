@@ -1,0 +1,286 @@
+/* Auto-generated design tokens CSS */
+
+/* ==================== */
+/* COLOR TOKENS (ROLES) */
+/* ==================== */
+
+:root {
+  --color-primary: hsl(154, 100%, 54%);
+  --color-on-primary: hsl(0, 0%, 100%);
+  --color-primary-container: hsl(156, 100%, 45%);
+  --color-on-primary-container: hsl(153, 100%, 16%);
+  --color-secondary: hsl(153, 26%, 32%);
+  --color-on-secondary: hsl(0, 0%, 100%);
+  --color-secondary-container: hsl(150, 33%, 73%);
+  --color-on-secondary-container: hsl(155, 37%, 23%);
+  --color-tertiary: hsl(152, 19%, 33%);
+  --color-on-tertiary: hsl(0, 0%, 100%);
+  --color-tertiary-container: hsl(148, 27%, 74%);
+  --color-on-tertiary-container: hsl(154, 26%, 24%);
+  --color-error: hsl(0, 72%, 36%);
+  --color-on-error: hsl(0, 0%, 100%);
+  --color-error-container: hsl(0, 53%, 75%);
+  --color-on-error-container: hsl(0, 73%, 28%);
+  --color-background: hsl(0, 0%, 98%);
+  --color-on-background: hsl(0, 0%, 11%);
+  --color-surface: hsl(0, 0%, 98%);
+  --color-on-surface: hsl(0, 0%, 11%);
+  --color-surface-variant: hsl(0, 0%, 89%);
+  --color-on-surface-variant: hsl(0, 0%, 28%);
+  --color-outline: hsl(0, 0%, 47%);
+  --color-outline-variant: hsl(0, 0%, 78%);
+  --color-inverse-surface: hsl(0, 0%, 19%);
+  --color-inverse-on-surface: hsl(0, 0%, 95%);
+  --color-inverse-primary: hsl(156, 100%, 45%);
+  --color-surface-dim: hsl(0, 0%, 85%);
+  --color-surface-bright: hsl(0, 0%, 98%);
+  --color-surface-container-lowest: hsl(0, 0%, 100%);
+  --color-surface-container-low: hsl(0, 0%, 95%);
+  --color-surface-container: hsl(0, 0%, 93%);
+  --color-surface-container-high: hsl(0, 0%, 91%);
+  --color-surface-container-highest: hsl(0, 0%, 89%);
+  --color-on-surface-faint: hsl(0, 0%, 60%);
+}
+
+[data-theme="dark"] {
+  --color-primary: hsl(154, 100%, 54%);
+  --color-on-primary: hsl(152, 100%, 11%);
+  --color-primary-container: hsl(153, 100%, 16%);
+  --color-on-primary-container: hsl(147, 100%, 67%);
+  --color-secondary: hsl(150, 33%, 73%);
+  --color-on-secondary: hsl(160, 72%, 13%);
+  --color-secondary-container: hsl(155, 37%, 23%);
+  --color-on-secondary-container: hsl(149, 57%, 84%);
+  --color-tertiary: hsl(148, 27%, 74%);
+  --color-on-tertiary: hsl(156, 42%, 15%);
+  --color-tertiary-container: hsl(154, 26%, 24%);
+  --color-on-tertiary-container: hsl(148, 48%, 85%);
+  --color-error: hsl(0, 53%, 75%);
+  --color-on-error: hsl(0, 70%, 20%);
+  --color-error-container: hsl(0, 73%, 28%);
+  --color-on-error-container: hsl(0, 50%, 87%);
+  --color-background: hsl(0, 0%, 6%);
+  --color-on-background: hsl(0, 0%, 89%);
+  --color-surface: hsl(0, 0%, 6%);
+  --color-on-surface: hsl(0, 0%, 89%);
+  --color-surface-variant: hsl(0, 0%, 28%);
+  --color-on-surface-variant: hsl(0, 0%, 78%);
+  --color-outline: hsl(0, 0%, 57%);
+  --color-outline-variant: hsl(0, 0%, 28%);
+  --color-inverse-surface: hsl(0, 0%, 89%);
+  --color-inverse-on-surface: hsl(0, 0%, 19%);
+  --color-inverse-primary: hsl(154, 100%, 21%);
+  --color-surface-dim: hsl(0, 0%, 6%);
+  --color-surface-bright: hsl(0, 0%, 24%);
+  --color-surface-container-lowest: hsl(0, 0%, 4%);
+  --color-surface-container-low: hsl(0, 0%, 11%);
+  --color-surface-container: hsl(0, 0%, 12%);
+  --color-surface-container-high: hsl(0, 0%, 17%);
+  --color-surface-container-highest: hsl(0, 0%, 22%);
+  --color-on-surface-faint: hsl(0, 0%, 60%);
+}
+
+/* ==================== */
+/* TYPOGRAPHY TOKENS    */
+/* ==================== */
+
+:root {
+  --text-display-large-font-size: 62px;
+  --text-display-large-line-height: 93px;
+  --text-display-large-font-family: 'Inter';
+  --text-display-large-font-weight: 400;
+  --text-display-large-letter-spacing: -2.17px;
+  --text-display-medium-font-size: 56px;
+  --text-display-medium-line-height: 84px;
+  --text-display-medium-font-family: 'Inter';
+  --text-display-medium-font-weight: 400;
+  --text-display-medium-letter-spacing: 0.84px;
+  --text-display-small-font-size: 44px;
+  --text-display-small-line-height: 66px;
+  --text-display-small-font-family: 'Inter';
+  --text-display-small-font-weight: 400;
+  --text-display-small-letter-spacing: -1.1px;
+  --text-headline-large-font-size: 32px;
+  --text-headline-large-line-height: 40px;
+  --text-headline-large-font-family: 'Inter';
+  --text-headline-large-font-weight: 600;
+  --text-headline-large-letter-spacing: -0.48px;
+  --text-headline-medium-font-size: 32px;
+  --text-headline-medium-line-height: 40px;
+  --text-headline-medium-font-family: 'Inter';
+  --text-headline-medium-font-weight: 600;
+  --text-headline-medium-letter-spacing: -0.384px;
+  --text-headline-small-font-size: 32px;
+  --text-headline-small-line-height: 40px;
+  --text-headline-small-font-family: 'Inter';
+  --text-headline-small-font-weight: 600;
+  --text-headline-small-letter-spacing: -0.32px;
+  --text-title-large-font-size: 22px;
+  --text-title-large-line-height: 28px;
+  --text-title-large-font-family: 'Inter';
+  --text-title-large-font-weight: 600;
+  --text-title-large-letter-spacing: 0.187px;
+  --text-title-medium-font-size: 16px;
+  --text-title-medium-line-height: 24px;
+  --text-title-medium-font-family: 'Inter';
+  --text-title-medium-font-weight: 600;
+  --text-title-medium-letter-spacing: -0.08px;
+  --text-title-small-font-size: 14px;
+  --text-title-small-line-height: 20px;
+  --text-title-small-font-family: 'Inter';
+  --text-title-small-font-weight: 500;
+  --text-title-small-letter-spacing: -0.07px;
+  --text-body-large-font-size: 1rem;
+  --text-body-large-line-height: 1.5rem;
+  --text-body-large-font-family: 'Inter';
+  --text-body-large-font-weight: 500;
+  --text-body-large-letter-spacing: -0.152px;
+  --text-body-medium-font-size: 0.875rem;
+  --text-body-medium-line-height: 1.25rem;
+  --text-body-medium-font-family: 'Inter';
+  --text-body-medium-font-weight: 500;
+  --text-body-medium-letter-spacing: -0.133px;
+  --text-body-small-font-size: 0.75rem;
+  --text-body-small-line-height: 1rem;
+  --text-body-small-font-family: 'Inter';
+  --text-body-small-font-weight: 500;
+  --text-body-small-letter-spacing: 0.096px;
+  --text-label-large-font-size: 0.875rem;
+  --text-label-large-line-height: 1.25rem;
+  --text-label-large-font-family: 'Inter';
+  --text-label-large-font-weight: 500;
+  --text-label-large-letter-spacing: -0.119px;
+  --text-label-medium-font-size: 0.75rem;
+  --text-label-medium-line-height: 1rem;
+  --text-label-medium-font-family: 'Inter';
+  --text-label-medium-font-weight: 500;
+  --text-label-medium-letter-spacing: 0.06px;
+  --text-label-small-font-size: 0.6875rem;
+  --text-label-small-line-height: 1rem;
+  --text-label-small-font-family: 'Inter';
+  --text-label-small-font-weight: 500;
+  --text-label-small-letter-spacing: 0.055px;
+}
+
+/* Typography utility classes (optional) */
+
+.text-display-large {
+  font-size: var(--text-display-large-font-size);
+  line-height: var(--text-display-large-line-height);
+  font-family: var(--text-display-large-font-family);
+  font-weight: var(--text-display-large-font-weight);
+  letter-spacing: var(--text-display-large-letter-spacing);
+}
+
+.text-display-medium {
+  font-size: var(--text-display-medium-font-size);
+  line-height: var(--text-display-medium-line-height);
+  font-family: var(--text-display-medium-font-family);
+  font-weight: var(--text-display-medium-font-weight);
+  letter-spacing: var(--text-display-medium-letter-spacing);
+}
+
+.text-display-small {
+  font-size: var(--text-display-small-font-size);
+  line-height: var(--text-display-small-line-height);
+  font-family: var(--text-display-small-font-family);
+  font-weight: var(--text-display-small-font-weight);
+  letter-spacing: var(--text-display-small-letter-spacing);
+}
+
+.text-headline-large {
+  font-size: var(--text-headline-large-font-size);
+  line-height: var(--text-headline-large-line-height);
+  font-family: var(--text-headline-large-font-family);
+  font-weight: var(--text-headline-large-font-weight);
+  letter-spacing: var(--text-headline-large-letter-spacing);
+}
+
+.text-headline-medium {
+  font-size: var(--text-headline-medium-font-size);
+  line-height: var(--text-headline-medium-line-height);
+  font-family: var(--text-headline-medium-font-family);
+  font-weight: var(--text-headline-medium-font-weight);
+  letter-spacing: var(--text-headline-medium-letter-spacing);
+}
+
+.text-headline-small {
+  font-size: var(--text-headline-small-font-size);
+  line-height: var(--text-headline-small-line-height);
+  font-family: var(--text-headline-small-font-family);
+  font-weight: var(--text-headline-small-font-weight);
+  letter-spacing: var(--text-headline-small-letter-spacing);
+}
+
+.text-title-large {
+  font-size: var(--text-title-large-font-size);
+  line-height: var(--text-title-large-line-height);
+  font-family: var(--text-title-large-font-family);
+  font-weight: var(--text-title-large-font-weight);
+  letter-spacing: var(--text-title-large-letter-spacing);
+}
+
+.text-title-medium {
+  font-size: var(--text-title-medium-font-size);
+  line-height: var(--text-title-medium-line-height);
+  font-family: var(--text-title-medium-font-family);
+  font-weight: var(--text-title-medium-font-weight);
+  letter-spacing: var(--text-title-medium-letter-spacing);
+}
+
+.text-title-small {
+  font-size: var(--text-title-small-font-size);
+  line-height: var(--text-title-small-line-height);
+  font-family: var(--text-title-small-font-family);
+  font-weight: var(--text-title-small-font-weight);
+  letter-spacing: var(--text-title-small-letter-spacing);
+}
+
+.text-body-large {
+  font-size: var(--text-body-large-font-size);
+  line-height: var(--text-body-large-line-height);
+  font-family: var(--text-body-large-font-family);
+  font-weight: var(--text-body-large-font-weight);
+  letter-spacing: var(--text-body-large-letter-spacing);
+}
+
+.text-body-medium {
+  font-size: var(--text-body-medium-font-size);
+  line-height: var(--text-body-medium-line-height);
+  font-family: var(--text-body-medium-font-family);
+  font-weight: var(--text-body-medium-font-weight);
+  letter-spacing: var(--text-body-medium-letter-spacing);
+}
+
+.text-body-small {
+  font-size: var(--text-body-small-font-size);
+  line-height: var(--text-body-small-line-height);
+  font-family: var(--text-body-small-font-family);
+  font-weight: var(--text-body-small-font-weight);
+  letter-spacing: var(--text-body-small-letter-spacing);
+}
+
+.text-label-large {
+  font-size: var(--text-label-large-font-size);
+  line-height: var(--text-label-large-line-height);
+  font-family: var(--text-label-large-font-family);
+  font-weight: var(--text-label-large-font-weight);
+  letter-spacing: var(--text-label-large-letter-spacing);
+}
+
+.text-label-medium {
+  font-size: var(--text-label-medium-font-size);
+  line-height: var(--text-label-medium-line-height);
+  font-family: var(--text-label-medium-font-family);
+  font-weight: var(--text-label-medium-font-weight);
+  letter-spacing: var(--text-label-medium-letter-spacing);
+}
+
+.text-label-small {
+  font-size: var(--text-label-small-font-size);
+  line-height: var(--text-label-small-line-height);
+  font-family: var(--text-label-small-font-family);
+  font-weight: var(--text-label-small-font-weight);
+  letter-spacing: var(--text-label-small-letter-spacing);
+}
+

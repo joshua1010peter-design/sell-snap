@@ -1,0 +1,128 @@
+generator client {
+  provider        = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id                 String    @id @default(cuid())
+  name               String
+  email              String    @unique
+  passwordHash       String
+  businessName       String?
+  storeDescription   String?
+  storePhone         String?
+  onboardingComplete Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  products  Product[]
+  orders    Order[]
+  sessions  Session[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@map("sessions")
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  sellerId    String
+  name        String
+  description String?
+  price       Int
+  currency    String   @default("NGN")
+  images      String   @default("[]")
+  slug        String   @unique
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  seller User   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  items  OrderItem[]
+
+  @@index([sellerId])
+  @@index([slug])
+  @@map("products")
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  buyerEmail    String
+  buyerPhone    String?
+  buyerName     String?
+  status        String      @default("PENDING")
+  totalAmount   Int
+  currency      String      @default("NGN")
+  flutterwaveId String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  sellerId String
+  seller   User        @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  items    OrderItem[]
+  logs     PaymentLog[]
+
+  @@index([sellerId])
+  @@index([status])
+  @@index([flutterwaveId])
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int    @default(1)
+  price     Int
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
+}
+
+
+model PaymentLog {
+  id        String   @id @default(cuid())
+  orderId   String?
+  event     String
+  amount    Int?
+  currency  String?
+  status    String?
+  message   String?
+  metadata  String?
+  createdAt DateTime @default(now())
+
+  order Order? @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([event])
+  @@index([createdAt])
+  @@map("payment_logs")
+}
+
+model RateLimit {
+  key       String   @id
+  count     Int      @default(0)
+  resetAt   DateTime
+  createdAt DateTime @default(now())
+
+  @@map("rate_limits")
+}
