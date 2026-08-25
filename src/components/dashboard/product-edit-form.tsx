@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -13,17 +13,56 @@ interface ProductData {
   price: number
   published: boolean
   slug: string
+  images: string
 }
 
 export function ProductEditForm({ product }: { product: ProductData }) {
   const router = useRouter()
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
   const [name, setName] = useState(product.name)
   const [description, setDescription] = useState(product.description ?? '')
   const [price, setPrice] = useState(String(product.price / 100))
   const [published, setPublished] = useState(product.published)
+  const [images, setImages] = useState<string[]>(() => {
+    try { return JSON.parse(product.images) } catch { return [] }
+  })
+
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const data = await res.json()
+      if (!data.ok) {
+        setError(data.error.message)
+        return
+      }
+
+      setImages((prev) => [...prev, data.data.url])
+    } catch {
+      setError('Image upload failed. Please try again.')
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
+  function removeImage(url: string) {
+    setImages((prev) => prev.filter((img) => img !== url))
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -39,6 +78,7 @@ export function ProductEditForm({ product }: { product: ProductData }) {
           description,
           price: Math.round(parseFloat(price) * 100),
           published,
+          images,
         }),
       })
 
@@ -145,6 +185,52 @@ export function ProductEditForm({ product }: { product: ProductData }) {
                   }}
                   required
                 />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label style={{ fontSize: 'var(--text-label-medium-font-size)', color: 'var(--color-on-surface)' }}>
+                  Product Images
+                </label>
+
+                {images.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {images.map((url) => (
+                      <div key={url} className="relative w-24 h-24 rounded-lg overflow-hidden" style={{ backgroundColor: 'var(--color-surface-container-high)' }}>
+                        <img
+                          src={url}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(url)}
+                          className="absolute top-0.5 right-0.5 w-5 h-5 flex items-center justify-center rounded-full text-xs text-white"
+                          style={{ backgroundColor: 'var(--color-error)' }}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex items-center gap-3">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    loading={uploading}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    {images.length > 0 ? 'Add Another Image' : 'Upload Image'}
+                  </Button>
+                </div>
               </div>
 
               <label className="flex items-center gap-2 cursor-pointer">

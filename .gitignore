@@ -45,8 +45,9 @@ next-env.d.ts
 *.sqlite
 prisma/dev.db*
 
-# runtime uploads
-/public/uploads/
+# runtime uploads (keep directory, ignore contents)
+/public/uploads/*
+!/public/uploads/.gitkeep
 
 # nested boilerplate repo (use the root app instead)
 /sell-snap/

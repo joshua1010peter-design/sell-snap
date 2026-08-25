@@ -47,10 +47,18 @@ export default async function OrderDetailPage({
                   >
                     <div className="flex items-center gap-3">
                       <div
-                        className="w-12 h-12 rounded-lg flex items-center justify-center"
+                        className="w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden"
                         style={{ backgroundColor: 'var(--color-surface-container)' }}
                       >
-                        <span>📦</span>
+                        {(() => {
+                          try {
+                            const imgs = JSON.parse(item.product.images)
+                            if (Array.isArray(imgs) && imgs.length > 0) {
+                              return <img src={imgs[0]} alt={item.product.name} className="w-full h-full object-cover" />
+                            }
+                          } catch {}
+                          return <span>📦</span>
+                        })()}
                       </div>
                       <div>
                         <p style={{ color: 'var(--color-on-surface)', fontSize: 'var(--text-body-medium-font-size)' }}>

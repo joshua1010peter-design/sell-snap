@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
         metadata: { productId, productName: product.name, quantity },
       })
 
-      const redirectUrl = `${parsedAppUrl.origin}/p/${product.slug}?paid=true`
+      const redirectUrl = `${parsedAppUrl.origin}/p/${product.slug}?paid=true&tx_ref=${order.id}`
 
       const paymentLink = await createFlutterwavePaymentLink({
         tx_ref: order.id,

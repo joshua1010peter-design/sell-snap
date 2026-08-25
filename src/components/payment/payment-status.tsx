@@ -12,7 +12,9 @@ function getInitialState(
   status: string | null,
   transactionId: string | null,
   txRef: string | null,
+  paid: string | null,
 ): PaymentState | null {
+  if (paid === 'true' && VALID_CUID.test(txRef ?? '')) return 'verifying'
   if (!status && !transactionId && !txRef) return null
   if (status === 'cancelled') return 'cancelled'
   if (VALID_CUID.test(txRef ?? '')) return 'verifying'
@@ -95,10 +97,11 @@ export function PaymentStatus() {
   const statusParam = searchParams.get('status')
   const transactionId = searchParams.get('transaction_id')
   const txRef = searchParams.get('tx_ref')
+  const paid = searchParams.get('paid')
   const ran = useRef(false)
 
   const [state, setState] = useState<PaymentState | null>(() =>
-    getInitialState(statusParam, transactionId, txRef),
+    getInitialState(statusParam, transactionId, txRef, paid),
   )
   const [visible, setVisible] = useState(false)
 
@@ -171,7 +174,7 @@ export function PaymentStatus() {
     return () => {
       cancelled = true
     }
-  }, [state, transactionId, txRef, searchParams, router, verify])
+  }, [state, transactionId, txRef, paid, searchParams, router, verify])
 
   if (!state) return null
 

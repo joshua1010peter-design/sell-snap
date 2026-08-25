@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ ok: true, data: { status: 'PAID' } })
     }
 
-    if (order.status === 'FAILED' || order.status === 'REFUNDED') {
+    if (order.status === 'REFUNDED') {
       return NextResponse.json({ ok: true, data: { status: order.status } })
     }
 
@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
     }
 
     const updated = await prisma.order.updateMany({
-      where: { id: order.id, status: 'PENDING' },
+      where: { id: order.id, status: { in: ['PENDING', 'FAILED'] } },
       data: { status: 'PAID', flutterwaveId: transactionId },
     })
 
