@@ -50,7 +50,11 @@ export async function POST(request: NextRequest) {
         { status: error.statusCode },
       )
     }
-    console.error('Signup error:', error instanceof Error ? error.message : error)
+    console.error('[signup] Unexpected error:', {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : undefined,
+    })
     return NextResponse.json(
       { ok: false, error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' } },
       { status: 500 },

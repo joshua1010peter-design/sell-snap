@@ -11,9 +11,10 @@ function createPrismaClient() {
       const { Pool } = require('pg')
       const pool = new Pool({ connectionString: dbUrl })
       const adapter = new PrismaPg(pool)
+      console.log('[db] PrismaClient initialized with PostgreSQL adapter')
       return new PrismaClient({ adapter })
     } catch (e) {
-      console.error('Failed to initialize Prisma with pg adapter:', e)
+      console.error('[db] Failed to initialize Prisma with pg adapter:', e instanceof Error ? e.message : e)
       throw e
     }
   }
@@ -21,10 +22,12 @@ function createPrismaClient() {
   // SQLite local development (Prisma 7 requires driver adapter)
   try {
     const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3')
-    const adapter = new PrismaBetterSqlite3({ url: dbUrl || 'file:./dev.db' })
+    const url = dbUrl || 'file:./dev.db'
+    const adapter = new PrismaBetterSqlite3({ url })
+    console.log('[db] PrismaClient initialized with SQLite adapter')
     return new PrismaClient({ adapter })
   } catch (e) {
-    console.error('Failed to initialize Prisma with better-sqlite3 adapter:', e)
+    console.error('[db] Failed to initialize Prisma with better-sqlite3 adapter:', e instanceof Error ? e.message : e)
     throw e
   }
 }

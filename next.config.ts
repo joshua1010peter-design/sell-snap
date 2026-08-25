@@ -13,6 +13,7 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  serverExternalPackages: ['better-sqlite3', 'pg'],
   async headers() {
     return [
       {

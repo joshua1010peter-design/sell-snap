@@ -3,7 +3,8 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 function getDatabaseUrl() {
-  let databaseUrl = process.env.DATABASE_URL;
+  // Priority: process.env (Vercel / shell export) > .env.local > .env
+  const fileEnv = {};
 
   const envFiles = ['.env.local', '.env'];
   for (const file of envFiles) {
@@ -14,15 +15,30 @@ function getDatabaseUrl() {
       for (const line of lines) {
         const match = line.match(/^\s*DATABASE_URL\s*=\s*["']?(.*?)["']?\s*$/);
         if (match) {
-          databaseUrl = match[1];
+          fileEnv[file] = match[1];
           break;
         }
       }
     }
-    if (databaseUrl) break;
   }
 
-  return databaseUrl || '';
+  // process.env always wins (set by Vercel, shell, CI, etc.)
+  if (process.env.DATABASE_URL) {
+    console.log(`[DB Setup] Using DATABASE_URL from process.env`);
+    return process.env.DATABASE_URL;
+  }
+
+  // Fall back to .env.local, then .env (for local development)
+  if (fileEnv['.env.local']) {
+    console.log(`[DB Setup] Using DATABASE_URL from .env.local`);
+    return fileEnv['.env.local'];
+  }
+  if (fileEnv['.env']) {
+    console.log(`[DB Setup] Using DATABASE_URL from .env`);
+    return fileEnv['.env'];
+  }
+
+  return '';
 }
 
 function setup() {
@@ -30,8 +46,13 @@ function setup() {
   const isPostgres = databaseUrl.startsWith('postgres://') || databaseUrl.startsWith('postgresql://');
   const targetProvider = isPostgres ? 'postgresql' : 'sqlite';
 
-  console.log(`[DB Setup] Detected database URL: ${databaseUrl ? '(hidden)' : 'none'}`);
   console.log(`[DB Setup] Target provider: ${targetProvider}`);
+  console.log(`[DB Setup] Database URL: ${databaseUrl ? '(set)' : '(not set)'}`);
+
+  if (!databaseUrl) {
+    console.warn('[DB Setup] WARNING: DATABASE_URL is not set. Defaulting to SQLite.');
+    console.warn('[DB Setup] For Vercel deployment, set DATABASE_URL to a PostgreSQL connection string.');
+  }
 
   const schemaPath = path.resolve(process.cwd(), 'prisma/schema.prisma');
   if (!fs.existsSync(schemaPath)) {
@@ -40,7 +61,7 @@ function setup() {
   }
 
   let schemaContent = fs.readFileSync(schemaPath, 'utf-8');
-  
+
   // Find datasource db block and replace provider
   const datasourceRegex = /(datasource\s+db\s*\{\s*provider\s*=\s*")([^"]+)("\s*\})/g;
   const currentProviderMatch = datasourceRegex.exec(schemaContent);
@@ -70,13 +91,22 @@ function setup() {
   console.log('[DB Setup] Generating Prisma Client...');
   execSync('npx prisma generate', { stdio: 'inherit' });
 
-  // If using SQLite, run db push to ensure tables are created
+  // Push schema to the database for both providers
   if (targetProvider === 'sqlite') {
     console.log('[DB Setup] Syncing SQLite database structure (prisma db push)...');
     try {
       execSync('npx prisma db push', { stdio: 'inherit' });
     } catch (e) {
       console.error('[DB Setup] Failed to push database schema:', e.message);
+    }
+  } else {
+    console.log(`[DB Setup] Pushing schema to ${targetProvider} database (prisma db push)...`);
+    try {
+      execSync('npx prisma db push', { stdio: 'inherit' });
+    } catch (e) {
+      console.error(`[DB Setup] Failed to push schema to ${targetProvider} database:`, e.message);
+      console.error('[DB Setup] Ensure DATABASE_URL is correct and the database is accessible.');
+      process.exit(1);
     }
   }
 }
