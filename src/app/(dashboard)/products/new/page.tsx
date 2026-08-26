@@ -2,6 +2,8 @@ import { getCurrentUser } from '@/lib/auth'
 import { Header } from '@/components/dashboard/header'
 import { ProductForm } from '@/components/dashboard/product-form'
 
+export const dynamic = 'force-dynamic'
+
 export default async function NewProductPage() {
   const user = await getCurrentUser()
   if (!user) return null

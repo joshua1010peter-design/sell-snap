@@ -4,6 +4,8 @@ import { prisma } from '@/lib/db'
 import { Header } from '@/components/dashboard/header'
 import { ProductEditForm } from '@/components/dashboard/product-edit-form'
 
+export const dynamic = 'force-dynamic'
+
 export default async function ProductDetailPage({
   params,
 }: {

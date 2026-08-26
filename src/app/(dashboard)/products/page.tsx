@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatPrice, formatDate } from '@/lib/utils'
 
+export const dynamic = 'force-dynamic'
+
 export default async function ProductsPage() {
   const user = await getCurrentUser()
   if (!user) return null
@@ -71,15 +73,15 @@ export default async function ProductsPage() {
                     backgroundColor: 'var(--color-surface-container-low)',
                   }}
                 >
-                  {JSON.parse(product.images).length > 0 ? (
-                      <img
-                        src={JSON.parse(product.images)[0]}
-                      alt={product.name}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
-                  ) : (
-                    <span style={{ fontSize: 48 }}>📦</span>
-                  )}
+                  {(() => {
+                    try {
+                      const imgs = JSON.parse(product.images)
+                      if (Array.isArray(imgs) && imgs.length > 0) {
+                        return <img src={imgs[0]} alt={product.name} className="w-full h-full object-cover rounded-lg" />
+                      }
+                    } catch {}
+                    return <span style={{ fontSize: 48 }}>📦</span>
+                  })()}
                 </div>
                 <CardTitle>{product.name}</CardTitle>
                 <p

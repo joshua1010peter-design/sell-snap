@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge'
 import { formatPrice, formatDateTime } from '@/lib/utils'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 export default async function OrdersPage() {
   const user = await getCurrentUser()
   if (!user) return null

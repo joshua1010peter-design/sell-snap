@@ -6,6 +6,8 @@ import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatPrice, formatDateTime } from '@/lib/utils'
 
+export const dynamic = 'force-dynamic'
+
 export default async function OrderDetailPage({
   params,
 }: {

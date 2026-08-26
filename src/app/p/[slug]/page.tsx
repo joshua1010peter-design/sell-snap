@@ -7,6 +7,8 @@ import { CheckoutForm } from '@/components/payment/checkout-form'
 import { PaymentStatus } from '@/components/payment/payment-status'
 import type { Metadata } from 'next'
 
+export const dynamic = 'force-dynamic'
+
 function isValidImageUrl(url: string): boolean {
   if (url.startsWith('/')) return true
   try {

@@ -5,6 +5,8 @@ import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { SettingsForm } from '@/components/dashboard/settings-form'
 import { ChangePasswordForm } from '@/components/dashboard/change-password-form'
 
+export const dynamic = 'force-dynamic'
+
 export default async function SettingsPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/auth?mode=login')
