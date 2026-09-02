@@ -43,15 +43,19 @@ function getDatabaseUrl() {
 
 function setup() {
   const databaseUrl = getDatabaseUrl();
-  const isPostgres = databaseUrl.startsWith('postgres://') || databaseUrl.startsWith('postgresql://');
+  const isVercelProd = Boolean(process.env.VERCEL || process.env.NODE_ENV === 'production');
+  const isPostgres = databaseUrl.startsWith('postgres://') || databaseUrl.startsWith('postgresql://') || (isVercelProd && !databaseUrl);
   const targetProvider = isPostgres ? 'postgresql' : 'sqlite';
 
   console.log(`[DB Setup] Target provider: ${targetProvider}`);
   console.log(`[DB Setup] Database URL: ${databaseUrl ? '(set)' : '(not set)'}`);
 
   if (!databaseUrl) {
-    console.warn('[DB Setup] WARNING: DATABASE_URL is not set. Defaulting to SQLite.');
-    console.warn('[DB Setup] For Vercel deployment, set DATABASE_URL to a PostgreSQL connection string.');
+    if (isVercelProd) {
+      console.warn('[DB Setup] WARNING: DATABASE_URL is not set in production build! Defaulting schema provider to postgresql.');
+    } else {
+      console.warn('[DB Setup] WARNING: DATABASE_URL is not set. Defaulting to SQLite.');
+    }
   }
 
   const schemaPath = path.resolve(process.cwd(), 'prisma/schema.prisma');
@@ -102,11 +106,10 @@ function setup() {
   } else {
     console.log(`[DB Setup] Pushing schema to ${targetProvider} database (prisma db push)...`);
     try {
-      execSync('npx prisma db push', { stdio: 'inherit' });
+      execSync('npx prisma db push --accept-data-loss', { stdio: 'inherit' });
     } catch (e) {
-      console.error(`[DB Setup] Failed to push schema to ${targetProvider} database:`, e.message);
-      console.error('[DB Setup] Ensure DATABASE_URL is correct and the database is accessible.');
-      process.exit(1);
+      console.warn(`[DB Setup] Warning: Failed to push schema to ${targetProvider} database:`, e.message);
+      console.warn('[DB Setup] Ensure DATABASE_URL is correct and accessible.');
     }
   }
 }

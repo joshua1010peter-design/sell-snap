@@ -18,39 +18,44 @@ function hashPassword(password: string): string {
 }
 
 function verifyPassword(password: string, stored: string): boolean {
-  const parts = stored.split(':')
-  if (parts.length === 3) {
-    const [salt, iterationsStr, hash] = parts
-    const iterations = parseInt(iterationsStr, 10)
-    if (!salt || !hash || isNaN(iterations)) return false
+  try {
+    const parts = stored.split(':')
+    if (parts.length === 3) {
+      const [salt, iterationsStr, hash] = parts
+      const iterations = parseInt(iterationsStr, 10)
+      if (!salt || !hash || isNaN(iterations)) return false
 
-    const verify = crypto
-      .pbkdf2Sync(password, salt, iterations, PBKDF2_KEY_LENGTH, 'sha512')
-      .toString('hex')
+      const verify = crypto
+        .pbkdf2Sync(password, salt, iterations, PBKDF2_KEY_LENGTH, 'sha512')
+        .toString('hex')
 
-    const hashBuf = Buffer.from(hash, 'hex')
-    const verifyBuf = Buffer.from(verify, 'hex')
+      const hashBuf = Buffer.from(hash, 'hex')
+      const verifyBuf = Buffer.from(verify, 'hex')
 
-    if (hashBuf.length !== verifyBuf.length) return false
-    return crypto.timingSafeEqual(hashBuf, verifyBuf)
+      if (hashBuf.length !== verifyBuf.length) return false
+      return crypto.timingSafeEqual(hashBuf, verifyBuf)
+    }
+
+    if (parts.length === 2) {
+      const [salt, hash] = parts
+      if (!salt || !hash) return false
+
+      const verify = crypto
+        .pbkdf2Sync(password, salt, 1000, PBKDF2_KEY_LENGTH, 'sha512')
+        .toString('hex')
+
+      const hashBuf = Buffer.from(hash, 'hex')
+      const verifyBuf = Buffer.from(verify, 'hex')
+
+      if (hashBuf.length !== verifyBuf.length) return false
+      return crypto.timingSafeEqual(hashBuf, verifyBuf)
+    }
+
+    return false
+  } catch (err) {
+    console.error('[auth] Password verification error:', err)
+    return false
   }
-
-  if (parts.length === 2) {
-    const [salt, hash] = parts
-    if (!salt || !hash) return false
-
-    const verify = crypto
-      .pbkdf2Sync(password, salt, 1000, PBKDF2_KEY_LENGTH, 'sha512')
-      .toString('hex')
-
-    const hashBuf = Buffer.from(hash, 'hex')
-    const verifyBuf = Buffer.from(verify, 'hex')
-
-    if (hashBuf.length !== verifyBuf.length) return false
-    return crypto.timingSafeEqual(hashBuf, verifyBuf)
-  }
-
-  return false
 }
 
 function isLegacyHash(stored: string): boolean {
@@ -80,23 +85,32 @@ export async function createSession(userId: string) {
 }
 
 export async function getSession() {
-  const cookieStore = await cookies()
-  const token = cookieStore.get(SESSION_COOKIE)?.value
-  if (!token) return null
+  try {
+    const cookieStore = await cookies()
+    const token = cookieStore.get(SESSION_COOKIE)?.value
+    if (!token) return null
 
-  const session = await prisma.session.findUnique({
-    where: { token },
-    include: { user: true },
-  })
+    const session = await prisma.session.findUnique({
+      where: { token },
+      include: { user: true },
+    })
 
-  if (!session || session.expiresAt < new Date()) {
-    if (session) {
-      await prisma.session.delete({ where: { id: session.id } })
+    if (!session || session.expiresAt < new Date()) {
+      if (session) {
+        try {
+          await prisma.session.delete({ where: { id: session.id } })
+        } catch {
+          // Cleanup is best-effort
+        }
+      }
+      return null
     }
+
+    return session
+  } catch (err) {
+    console.error('[auth] Error retrieving session:', err)
     return null
   }
-
-  return session
 }
 
 export async function getCurrentUser() {
@@ -105,22 +119,42 @@ export async function getCurrentUser() {
 }
 
 export async function signupUser(name: string, email: string, password: string) {
-  const existing = await prisma.user.findUnique({ where: { email } })
+  let existing
+  try {
+    existing = await prisma.user.findUnique({ where: { email } })
+  } catch (dbErr) {
+    console.error('[auth] Database query failed during signup:', dbErr)
+    throw new AppError('Unable to connect to database. Please check your database URL.', 503, 'DATABASE_ERROR')
+  }
+
   if (existing) {
     throw new AppError('Email already in use', 409, 'EMAIL_EXISTS')
   }
 
   const passwordHash = hashPassword(password)
-  const user = await prisma.user.create({
-    data: { name, email, passwordHash },
-  })
+  let user
+  try {
+    user = await prisma.user.create({
+      data: { name, email, passwordHash },
+    })
+  } catch (createErr) {
+    console.error('[auth] User creation failed:', createErr)
+    throw new AppError('Failed to create account. Please ensure database tables exist.', 500, 'USER_CREATE_ERROR')
+  }
 
   await createSession(user.id)
   return user
 }
 
 export async function loginUser(email: string, password: string) {
-  const user = await prisma.user.findUnique({ where: { email } })
+  let user
+  try {
+    user = await prisma.user.findUnique({ where: { email } })
+  } catch (dbErr) {
+    console.error('[auth] Database query failed during login:', dbErr)
+    throw new AppError('Unable to connect to database. Please check your database connection.', 503, 'DATABASE_ERROR')
+  }
+
   if (!user) {
     throw new AppError('Invalid email or password', 401, 'INVALID_CREDENTIALS')
   }
@@ -131,10 +165,14 @@ export async function loginUser(email: string, password: string) {
 
   if (isLegacyHash(user.passwordHash)) {
     const newHash = hashPassword(password)
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { passwordHash: newHash },
-    })
+    try {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { passwordHash: newHash },
+      })
+    } catch (updateErr) {
+      console.warn('[auth] Failed to update legacy hash:', updateErr)
+    }
   }
 
   await createSession(user.id)

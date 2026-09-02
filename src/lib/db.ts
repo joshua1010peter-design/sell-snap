@@ -9,7 +9,10 @@ function createPrismaClient() {
     try {
       const { PrismaPg } = require('@prisma/adapter-pg')
       const { Pool } = require('pg')
-      const pool = new Pool({ connectionString: dbUrl })
+      const pool = new Pool({
+        connectionString: dbUrl,
+        ssl: dbUrl.includes('sslmode=disable') ? false : { rejectUnauthorized: false },
+      })
       const adapter = new PrismaPg(pool)
       console.log('[db] PrismaClient initialized with PostgreSQL adapter')
       return new PrismaClient({ adapter })
@@ -35,3 +38,4 @@ function createPrismaClient() {
 export const prisma = globalForPrisma.prisma ?? createPrismaClient()
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+
